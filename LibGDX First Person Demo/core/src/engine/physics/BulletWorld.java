@@ -17,12 +17,8 @@
  */
 package engine.physics;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import engine.Renderable;
 
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -39,6 +35,8 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Disposable;
+
+import engine.Renderable;
 
 /**
  * Bullet physics world that holds all bullet entities and constructors.
@@ -119,7 +117,7 @@ public class BulletWorld implements Disposable {
         for (Object obj : entities) {
             if (obj instanceof Entity) {
                 Entity e = (Entity) obj;
-                this.dynamicsWorld.removeRigidBody(e.getRigidBody());  // 1
+                this.dynamicsWorld.removeRigidBody(e.getRigidBody());
                 e.dispose();
             } else if (obj instanceof Disposable) {
                 ((Disposable) obj).dispose();

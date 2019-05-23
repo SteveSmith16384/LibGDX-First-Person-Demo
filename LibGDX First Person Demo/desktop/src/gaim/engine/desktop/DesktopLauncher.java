@@ -33,8 +33,8 @@ public final class DesktopLauncher {
         final LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Test";
 
-        cfg.width = 1600;
-        cfg.height = 900;
+        cfg.width = 640;//1600;
+        cfg.height = 480;//900;
 
         cfg.vSyncEnabled = true;
         cfg.fullscreen = false;
