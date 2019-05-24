@@ -1,5 +1,10 @@
 package engine;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.ModelLoader;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
@@ -11,8 +16,8 @@ import engine.physics.Entity;
 
 public class TestGame extends BaseEngine {
 
-	//private Entity ground;
 	private CharacterController player;
+	//private ModelInstance instance;
 
 	@Override
 	public void create() {
@@ -78,8 +83,18 @@ public class TestGame extends BaseEngine {
 				}
 			}
 		}
+		
+		// Load castle
+		//ModelLoader loader = new ObjLoader();
+		//Model model = loader.loadModel(Gdx.files.internal("castle.obj"));
+		//instance = new ModelInstance(model);
 	}
 
+	
+	protected void subrender() {
+		//instance.re
+	}
+	
 	
 	@Override
 	public void update(float dt) {

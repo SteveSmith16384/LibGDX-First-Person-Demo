@@ -109,7 +109,7 @@ public class CharacterController extends Entity implements Disposable, Telegraph
 		camera.direction.y = tmpY;
 		TMP_VEC.setZero();
 		
-		System.out.println("Pos=" + camera.position);
+		//System.out.println("Pos=" + camera.position);
 
 		return true;
 	}

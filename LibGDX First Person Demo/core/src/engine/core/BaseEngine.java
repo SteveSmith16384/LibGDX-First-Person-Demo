@@ -17,13 +17,12 @@
  */
 package engine.core;
 
-import static engine.Globals.Dispatcher.UPDATE;
-
 import java.util.HashSet;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.msg.MessageManager;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -33,6 +32,7 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
@@ -44,6 +44,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 import engine.physics.BulletWorld;
@@ -62,7 +63,10 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	public ObjLoader objLoader;
 	public ModelBuilder modelBuilder;
 	public ModelBatch modelBatch;
-
+	public Array<ModelInstance> instances = new Array<ModelInstance>();
+	public AssetManager assets;
+	private boolean loading = true;
+	
 	private final HashSet<Disposable> disposables;
 
 	private int debugMode = DebugDrawModes.DBG_NoDebug;
@@ -121,8 +125,18 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 				ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)), Usage.Position | Usage.Normal);
 		world.addConstructor("box", new EntityBlueprint(boxModel, 1f)); // mass = 1kg: dynamic body
 		//world.addConstructor("staticbox", new EntityBlueprint((Model) boxModel, 0f)); // mass = 0: static body
-	}
+		
+		assets = new AssetManager();
+        assets.load("castle.obj", Model.class);
+        loading = true;
+    }
 
+    private void doneLoading() {
+        Model ship = assets.get("castle.obj", Model.class);
+        ModelInstance shipInstance = new ModelInstance(ship); 
+        instances.add(shipInstance);
+        loading = false;
+    }
 
 	public BaseEngine addDisposable(Disposable disposable) {
 		this.disposables.add(disposable);
@@ -151,7 +165,10 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 		world.dispose();
 		world = null;
 
-		MessageManager.getInstance().clear();
+		instances.clear();
+        assets.dispose();
+        
+        MessageManager.getInstance().clear();
 
 		super.dispose();
 	}
@@ -170,6 +187,9 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	public void render() {
 		this.update(Gdx.graphics.getDeltaTime());
 
+		if (loading && assets.update())
+            doneLoading();
+		
 		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
@@ -186,6 +206,8 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 
 		this.modelBatch.begin(camera);
 		this.world.render(modelBatch, environment);
+		modelBatch.render(instances, environment);
+		//subrender();
 		this.modelBatch.end();
 
 		Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
@@ -193,6 +215,9 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 			this.world.setDebugMode(debugMode);
 		}
 	}
+
+	
+	protected abstract void subrender();
 
 	public void setDebugMode(final int mode) {
 		this.world.setDebugMode(debugMode = mode);
