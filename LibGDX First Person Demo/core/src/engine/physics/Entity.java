@@ -34,8 +34,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody.btRigidBodyConstruct
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
 import com.badlogic.gdx.utils.Disposable;
 
-import engine.Renderable;
-
 /**
  * Renderable BaseEntity with a bullet physics body.
  *
@@ -72,7 +70,7 @@ public class Entity implements Disposable, Renderable {
 		this(new ModelInstance(model, transform.cpy()), body);
 	}
 
-	@SuppressWarnings("LeakingThisInConstructor")
+
 	public Entity(final ModelInstance modelInstance, final btRigidBody body) {
 		this.modelInstance = modelInstance;
 		this.transform = this.modelInstance.transform;

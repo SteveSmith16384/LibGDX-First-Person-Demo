@@ -4,7 +4,8 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import static engine.Core.Game;
+import engine.TestGame;
+
 
 /**
  * Main is the main class of <b>Test</b> for Java. The sole purpose of this
@@ -18,17 +19,10 @@ public final class DesktopLauncher {
     /**
      * You can not instantiate this class.
      */
-    @Deprecated
     private DesktopLauncher() {
     }
 
-    /**
-     * <code>main</code> is used to start the game. <b>Test</b> for Java
-     * supports the following command line arguments: N/A
-     *
-     * @param args the command line arguments
-     */
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
+
     public static void main(String[] args) {
         final LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.title = "Test";
@@ -43,6 +37,6 @@ public final class DesktopLauncher {
         // cfg.samples = 16;
         cfg.preferencesFileType = Files.FileType.Internal;
 
-        new LwjglApplication(Game, cfg);
+        new LwjglApplication(new TestGame(), cfg);
     }
 }

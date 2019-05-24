@@ -18,9 +18,7 @@ import com.badlogic.gdx.utils.IntIntMap;
 
 import engine.physics.Entity;
 
-/**
- * @author root
- */
+
 public class CharacterController extends Entity implements Disposable, Telegraph {
 
 	private float degreesPerPixel = 0.5f;
@@ -72,13 +70,13 @@ public class CharacterController extends Entity implements Disposable, Telegraph
 	public boolean handleMessage(Telegram tlgrm) {
 		switch (tlgrm.message) {
 		case UPDATE: {
-			return update();
+			return update(0);
 		}
 		}
 		return false;
 	}
 
-	private boolean update() {
+	public boolean update(float dt) {
 		int speed = 20 * 2;
 
 		float tmpY = camera.direction.y;
@@ -110,6 +108,8 @@ public class CharacterController extends Entity implements Disposable, Telegraph
 
 		camera.direction.y = tmpY;
 		TMP_VEC.setZero();
+		
+		System.out.println("Pos=" + camera.position);
 
 		return true;
 	}

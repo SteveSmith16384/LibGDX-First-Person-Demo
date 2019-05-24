@@ -36,8 +36,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSol
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Disposable;
 
-import engine.Renderable;
-
 /**
  * Bullet physics world that holds all bullet entities and constructors.
  *

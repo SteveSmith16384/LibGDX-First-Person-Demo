@@ -12,11 +12,11 @@ import com.badlogic.gdx.math.Vector3;
  * Contains the definitions for the game engine. Globals is a collection list
  * the collection of global variables and constants that the game engine may
  * require. As consequence you don't have to touch that much code this time.
- * <b>You can not instantiate this class.</b>
+ * <b>You cannot instantiate this class.</b>
  *
  * @author root
  */
-public final class Globals implements Core {
+public final class Globals {
 
 	/**
 	 * You can not instantiate this class.
@@ -65,7 +65,7 @@ public final class Globals implements Core {
 	 */
 	public interface Dispatcher {
 
-		static final int UPDATE = 0x0;
+		static final int UPDATE = 0x0; // todfo - remove?
 		
 	}
 }

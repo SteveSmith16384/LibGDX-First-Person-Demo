@@ -1,4 +1,4 @@
-package engine;
+package engine.physics;
 
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;

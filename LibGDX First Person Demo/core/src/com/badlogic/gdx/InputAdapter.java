@@ -19,7 +19,6 @@ package com.badlogic.gdx;
 
 import com.badlogic.gdx.Input.Keys;
 
-import static engine.Core.Game;
 
 /**
  * An adapter class for {@link InputProcessor}. You can derive from this and
@@ -40,7 +39,7 @@ public class InputAdapter implements InputProcessor {
                 Gdx.input.setCursorCatched(!Gdx.input.isCursorCatched());
                 break;
             case Keys.F2:
-                Game.stepDebugMode();
+                //TestGame.stepDebugMode();
                 break;
         }
         return true;

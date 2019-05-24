@@ -11,13 +11,19 @@ import engine.physics.Entity;
 
 public class TestGame extends BaseEngine {
 
-	Entity ground;
-	CharacterController player;
+	//private Entity ground;
+	private CharacterController player;
 
 	@Override
 	public void create() {
 		super.create();
 
+		createPlayer();
+		createWorld();
+	}
+
+
+	private void createPlayer() {
 		btCollisionShape player_shape = new btBoxShape(new Vector3(1.5f, 2, 1.5f));
 
 		final Vector3 inertia = new Vector3(0, 0, 0);
@@ -28,19 +34,23 @@ public class TestGame extends BaseEngine {
 		player_body.setDamping(0.8f, 0.8f);
 		player_body.setAngularFactor(new Vector3(0, 0, 0)); // prevent the player from falling over
 
-		getWorld().add(player = new CharacterController(camera, getWorld().getConstructor("box").model, player_body, 5, 5, 5));
+		player = new CharacterController(camera, getWorld().getConstructor("box").model, player_body, 5, 5, 5);
+		getWorld().add(player);
+	}
 
-		// Add the ground
-		(ground = getWorld().add("ground", 0f, 0f, 0f))
-		.setColour(
+
+	private void createWorld() {
+		// Add the grounds
+		Entity ground = getWorld().add("ground", 0f, 0f, 0f);
+		ground.setColour(
 				0.25f + 0.5f * (float) Math.random(),
 				0.25f + 0.5f * (float) Math.random(),
 				0.25f + 0.5f * (float) Math.random(),
 				1f
 				);
 
-		(ground = getWorld().add("ground", 25f, 0f, 0f))
-		.setColour(
+		ground = getWorld().add("ground", 25f, 0f, 0f);
+		ground.setColour(
 				0.25f + 0.5f * (float) Math.random(),
 				0.25f + 0.5f * (float) Math.random(),
 				0.25f + 0.5f * (float) Math.random(),
@@ -68,44 +78,19 @@ public class TestGame extends BaseEngine {
 				}
 			}
 		}
-
-		//        String data = readFileAsString("data/newfile.json");
-		//
-		//        Wrapper obj = new Gson().fromJson(data, Wrapper.class);
-		//        System.out.println(obj.getLessons());
 	}
 
+	
+	@Override
+	public void update(float dt) {
+		player.update(dt);
+		super.update(dt);
+	}
+
+	
 	@Override
 	public void dispose() {
 		super.dispose();
-		this.ground = null;
 	}
-	/*
-    class Wrapper {
 
-        List<Lesson> lessons;
-
-        //Getters & Setters
-        public List<Lesson> getLessons() {
-            return lessons;
-        }
-    }
-
-    class Lesson {
-
-        private String id;
-        private String discipline;
-        private String type;
-        private String comment;
-
-        @Override
-        public String toString() {
-            return "Lesson{" + "id=" + id
-                    + ", discipline=" + discipline
-                    + ", type=" + type
-                    + ", comment=" + comment + '}';
-        }
-    }
-
-	 */
 }

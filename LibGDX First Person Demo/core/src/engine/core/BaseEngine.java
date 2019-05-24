@@ -49,35 +49,15 @@ import com.badlogic.gdx.utils.Disposable;
 import engine.physics.BulletWorld;
 import engine.physics.EntityBlueprint;
 
-/**
- * @author xoppa
- */
 public abstract class BaseEngine extends ApplicationAdapter implements Disposable {
 
-	public static boolean shadows = true;
-
-	/**
-	 * True if Bullet it is initialized.
-	 */
-	private static boolean INITIALIZED = false;
-
-	/**
-	 * Need to initialize bullet before using it.
-	 */
-	public static void initBullet() {
-		if (!INITIALIZED) {
-			Bullet.init();
-			BaseEngine.INITIALIZED = true;
-			Gdx.app.log("Bullet", "Version = " + LinearMath.btGetVersion());
-		}
-	}
+	public static final boolean SHADOWS = true;
+	private static boolean BULLET_INITIALIZED = false;
 
 	public Camera camera;
-
 	public Environment environment;
 	public DirectionalLight light;
 	public ModelBatch shadowBatch;
-
 	private BulletWorld world;
 	public ObjLoader objLoader;
 	public ModelBuilder modelBuilder;
@@ -94,6 +74,18 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	}
 
 
+	/**
+	 * Need to initialize bullet before using it.
+	 */
+	public static void initBullet() {
+		if (!BULLET_INITIALIZED) {
+			Bullet.init();
+			BaseEngine.BULLET_INITIALIZED = true;
+			Gdx.app.log("Bullet", "Version = " + LinearMath.btGetVersion());
+		}
+	}
+
+
 	@Override
 	public void create() {
 		BaseEngine.initBullet();
@@ -103,10 +95,10 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.3f, 0.3f, 0.3f, 1.f));
-		light = shadows ? new DirectionalShadowLight(1024, 1024, 20f, 20f, 1f, 300f) : new DirectionalLight();
+		light = SHADOWS ? new DirectionalShadowLight(1024, 1024, 20f, 20f, 1f, 300f) : new DirectionalLight();
 		light.set(0.8f, 0.8f, 0.8f, -0.5f, -1f, 0.7f);
 		environment.add(light);
-		if (shadows) {
+		if (SHADOWS) {
 			environment.shadowMap = (DirectionalShadowLight) light;
 		}
 		shadowBatch = new ModelBatch(new DepthShaderProvider());
@@ -116,21 +108,19 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 		world = new BulletWorld();
 
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 		camera.position.set(0, 10f, 0);
 		camera.update();
 
-		// Create some simple models
-		final Model boxModel = modelBuilder.createBox(1f, 1f, 1f, new Material(ColorAttribute.createDiffuse(Color.WHITE),
-				ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)), Usage.Position | Usage.Normal);
-
+		// Create ground template
 		final Model ground = modelBuilder.createBox(20f, 1f, 20f, new Material(ColorAttribute.createDiffuse(Color.WHITE),
 				ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(16f)), Usage.Position | Usage.Normal);
-
-		// Add the constructors
 		world.addConstructor("ground", new EntityBlueprint(ground, 0f)); // mass = 0: static body
+
+		// Create box template
+		final Model boxModel = modelBuilder.createBox(1f, 1f, 1f, new Material(ColorAttribute.createDiffuse(Color.WHITE),
+				ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)), Usage.Position | Usage.Normal);
 		world.addConstructor("box", new EntityBlueprint(boxModel, 1f)); // mass = 1kg: dynamic body
-		world.addConstructor("staticbox", new EntityBlueprint((Model) boxModel, 0f)); // mass = 0: static body
+		//world.addConstructor("staticbox", new EntityBlueprint((Model) boxModel, 0f)); // mass = 0: static body
 	}
 
 
@@ -153,7 +143,7 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 		shadowBatch.dispose();
 		shadowBatch = null;
 
-		if (shadows) {
+		if (SHADOWS) {
 			((DirectionalShadowLight) light).dispose();
 		}
 		light = null;
@@ -167,16 +157,8 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	}
 
 
-	/**
-	 * Callback function used to update the state of the game every frame.
-	 *
-	 * @param dt Delta Time is the time it takes for the computer to go through
-	 * all the processing/rendering for a single frame. It is dynamically
-	 * updated, so it can fluctuate depending on what level of processing the
-	 * last frame required.
-	 */
 	public void update(float dt) {
-		MessageManager.getInstance().dispatchMessage(UPDATE);
+		//MessageManager.getInstance().dispatchMessage(UPDATE);
 		this.world.update(dt);
 	}
 
@@ -194,7 +176,7 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		this.camera.update(true);
 
-		if (shadows) {
+		if (SHADOWS) {
 			((DirectionalShadowLight) light).begin(Vector3.Zero, camera.direction);
 			this.shadowBatch.begin(((DirectionalShadowLight) light).getCamera());
 			this.world.render(shadowBatch, null);
