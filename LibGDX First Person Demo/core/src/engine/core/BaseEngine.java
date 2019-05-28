@@ -37,7 +37,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
@@ -48,6 +47,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 import engine.physics.BulletWorld;
+import engine.physics.Entity;
 import engine.physics.EntityBlueprint;
 
 public abstract class BaseEngine extends ApplicationAdapter implements Disposable {
@@ -56,15 +56,14 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	private static boolean BULLET_INITIALIZED = false;
 
 	public Camera camera;
-	public Environment environment;
-	public DirectionalLight light;
-	public ModelBatch shadowBatch;
+	private Environment environment;
+	private DirectionalLight light;
+	private ModelBatch shadowBatch;
 	private BulletWorld world;
-	public ObjLoader objLoader;
-	public ModelBuilder modelBuilder;
-	public ModelBatch modelBatch;
-	public Array<ModelInstance> instances = new Array<ModelInstance>();
-	public AssetManager assets;
+	private ModelBuilder modelBuilder;
+	private ModelBatch modelBatch;
+	private Array<ModelInstance> instances = new Array<ModelInstance>();
+	private AssetManager assets;
 	private boolean loading = true;
 	
 	private final HashSet<Disposable> disposables;
@@ -73,7 +72,6 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 
 	public BaseEngine() {
 		this.modelBuilder = new ModelBuilder();
-		this.objLoader = new ObjLoader();
 		this.disposables = new HashSet<Disposable>();
 	}
 
@@ -124,20 +122,28 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 		final Model boxModel = modelBuilder.createBox(1f, 1f, 1f, new Material(ColorAttribute.createDiffuse(Color.WHITE),
 				ColorAttribute.createSpecular(Color.WHITE), FloatAttribute.createShininess(64f)), Usage.Position | Usage.Normal);
 		world.addConstructor("box", new EntityBlueprint(boxModel, 1f)); // mass = 1kg: dynamic body
-		//world.addConstructor("staticbox", new EntityBlueprint((Model) boxModel, 0f)); // mass = 0: static body
 		
 		assets = new AssetManager();
-        assets.load("castle.obj", Model.class);
+        assets.load("lab-02.obj", Model.class);
         loading = true;
     }
 
+	
     private void doneLoading() {
-        Model ship = assets.get("castle.obj", Model.class);
-        ModelInstance shipInstance = new ModelInstance(ship); 
+        Model model = assets.get("lab-02.obj", Model.class);
+        ModelInstance shipInstance = new ModelInstance(model); 
         instances.add(shipInstance);
+        
+        EntityBlueprint eb = new EntityBlueprint(model, 0, Bullet.obtainStaticNodeShape(model.nodes));
+        //btCollisionShape shape = Bullet.obtainStaticNodeShape(model.nodes);
+        //this.world.add(shape);
+		world.addConstructor("model", eb);
+		Entity model2 = getWorld().add("model", 0f, 0f, 0f);
+
         loading = false;
     }
 
+    
 	public BaseEngine addDisposable(Disposable disposable) {
 		this.disposables.add(disposable);
 		return this;
@@ -217,7 +223,7 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	}
 
 	
-	protected abstract void subrender();
+	//protected abstract void subrender();
 
 	public void setDebugMode(final int mode) {
 		this.world.setDebugMode(debugMode = mode);

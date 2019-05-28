@@ -7,7 +7,6 @@ import static engine.Globals.Dispatcher.UPDATE;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.graphics.Camera;
@@ -23,7 +22,6 @@ public class CharacterController extends Entity implements Disposable, Telegraph
 
 	private float degreesPerPixel = 0.5f;
 	private final IntIntMap keys = new IntIntMap();
-
 	private Camera camera;
 
 	public CharacterController(final Camera camera_, Model model, btRigidBody body, float xPos, float yPos, float zPos) {
@@ -56,13 +54,13 @@ public class CharacterController extends Entity implements Disposable, Telegraph
 			}
 		});
 
-		MessageManager.getInstance().addListener(this, UPDATE);
+		//MessageManager.getInstance().addListener(this, UPDATE);
 	}
 
 
 	@Override
 	public void dispose() {
-		MessageManager.getInstance().removeListener(this, UPDATE);
+		//MessageManager.getInstance().removeListener(this, UPDATE);
 		super.dispose();
 	}
 
@@ -70,7 +68,7 @@ public class CharacterController extends Entity implements Disposable, Telegraph
 	public boolean handleMessage(Telegram tlgrm) {
 		switch (tlgrm.message) {
 		case UPDATE: {
-			return update(0);
+			//return update(0);
 		}
 		}
 		return false;
