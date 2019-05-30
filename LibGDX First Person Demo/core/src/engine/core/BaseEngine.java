@@ -41,6 +41,7 @@ import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.Bullet;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.linearmath.LinearMath;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 import com.badlogic.gdx.utils.Array;
@@ -68,7 +69,7 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	
 	private final HashSet<Disposable> disposables;
 
-	private int debugMode = DebugDrawModes.DBG_NoDebug;
+	private int debugMode = DebugDrawModes.DBG_NoDebug;//.DBG_DrawWireframe;
 
 	public BaseEngine() {
 		this.modelBuilder = new ModelBuilder();
@@ -131,14 +132,15 @@ public abstract class BaseEngine extends ApplicationAdapter implements Disposabl
 	
     private void doneLoading() {
         Model model = assets.get("lab-02.obj", Model.class);
-        ModelInstance shipInstance = new ModelInstance(model); 
+        ModelInstance shipInstance = new ModelInstance(model);
+        //shipInstance.transform.scale(3,  3,  3);
         instances.add(shipInstance);
         
-        EntityBlueprint eb = new EntityBlueprint(model, 0, Bullet.obtainStaticNodeShape(model.nodes));
-        //btCollisionShape shape = Bullet.obtainStaticNodeShape(model.nodes);
-        //this.world.add(shape);
+        btCollisionShape shape = Bullet.obtainStaticNodeShape(model.nodes);
+        EntityBlueprint eb = new EntityBlueprint(model, 0, shape);
 		world.addConstructor("model", eb);
-		Entity model2 = getWorld().add("model", 0f, 0f, 0f);
+		Entity e = getWorld().add("model", 0f, -2f, 0f);
+        //shape.setLocalScaling(new Vector3(3, 3, 3));
 
         loading = false;
     }
